@@ -1,43 +1,49 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using PathFinderAdapter.Interfaces;
+using PathFinderAdapter.Services;
 using WikipediaSpeedRunLib;
 using static System.Net.Mime.MediaTypeNames;
 
-HttpClient httpClient = new HttpClient();
+HttpClientAdapter httpClient = new HttpClientAdapter();
 
 string goal = "https://en.wikipedia.org/wiki/BBC";
 string start = "https://en.wikipedia.org/wiki/Dunloy_railway_station";
-LinkInfos current = new LinkInfos(start, "Dunloy railway station");
+WikipediaPage startPage = await WikipediaPage.Build(start, httpClient);
 
-Queue<LinkInfos> fronteir = new Queue<LinkInfos>();
-fronteir.Enqueue(current);
-Dictionary<string, string> cameFrom = new();
+IPathFinderService pathFinderService = new PathFinderService();
 
-while (fronteir.Count > 0)
-{
-    current = fronteir.Dequeue();
-    WikipediaPage currentPage = new WikipediaPage();
-    if (current.Url == goal) break;
-    Console.WriteLine($"F:{fronteir.Count}\t\t Scanning {current.Url}...");
-    currentPage.LoadLinksInfosFromHtml(await httpClient.GetStringAsync(current.Url));
-    foreach (var next in currentPage.Links)
-    {
-        if (!cameFrom.ContainsKey(next.Key))
-        {
-            fronteir.Enqueue(next.Value);
-            cameFrom.Add(next.Key, current.Url);
-        }
-    }
-}
+var cameFrom = pathFinderService.BreadthFirstSearch(startPage, new WikipediaPage(goal, httpClient));
+
+//Queue<LinkInfos> fronteir = new Queue<LinkInfos>();
+//fronteir.Enqueue(current);
+//Dictionary<string, string> cameFrom = new();
+
+//while (fronteir.Count > 0)
+//{
+//    current = fronteir.Dequeue();
+//    WikipediaPage currentPage = new WikipediaPage(start, httpClient);
+//    if (current.Url == goal) break;
+//    Console.WriteLine($"F:{fronteir.Count}\t\t Scanning {current.Url}...");
+//    await currentPage.LoadPageInfos();
+//    foreach (var next in currentPage.ValuableLinks)
+//    {
+//        if (!cameFrom.ContainsKey(next.Key))
+//        {
+//            fronteir.Enqueue(next.Value);
+//            cameFrom.Add(next.Key, current.Url);
+//        }
+//    }
+//}
 
 Console.WriteLine("FOUND");
 
-string currentUrl = goal;
-while (currentUrl != start)
-{
-    Console.WriteLine(currentUrl);
-    currentUrl = cameFrom[currentUrl];
-}
+//string currentUrl = goal;
+//while (currentUrl != start)
+//{
+//    Console.WriteLine(currentUrl);
+//    currentUrl = cameFrom[currentUrl];
+//}
 
 
 
