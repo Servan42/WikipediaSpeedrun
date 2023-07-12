@@ -32,20 +32,74 @@ namespace WikipediaSpeedRunLib
             return url;
         }
 
+        public int GetCostOfCrossingThisNode()
+        {
+            if (!this.isPageLoaded)
+            {
+                LoadPageInfos().Wait();
+            }
+            return this.ValuableLinks.Count;
+        }
+
         public IEnumerable<INode> GetNeighbors()
         {
-            if(!this.isPageLoaded)
+            if (!this.isPageLoaded)
             {
                 LoadPageInfos().Wait();
             }
 
+            //return CreateNeighbors();
+            return CreateNeighborsThreaded(8);
+        }
+
+        private List<WikipediaPage> CreateNeighbors()
+        {
             List<WikipediaPage> neighbors = new();
-            foreach(var link in this.ValuableLinks)
+            foreach (var link in this.ValuableLinks)
+            {
+                WikipediaPage neighboor = new WikipediaPage(link.Value.Url, this.httpClient);
+                neighboor.LoadPageInfos().Wait();
+                neighbors.Add(neighboor);
+            }
+            return neighbors;
+        }
+
+        private List<WikipediaPage> CreateNeighborsThreaded(int nbThreads)
+        {
+            List<WikipediaPage> neighbors = new();
+
+            foreach (var link in this.ValuableLinks)
             {
                 WikipediaPage neighboor = new WikipediaPage(link.Value.Url, this.httpClient);
                 neighbors.Add(neighboor);
             }
 
+            List<Thread> threads = new();
+            Dictionary<int, List<WikipediaPage>> splittedPageList = new();
+            for (int i = 0; i < nbThreads; i++) splittedPageList.Add(i, new List<WikipediaPage>());
+            
+            int j = 0;
+            foreach (var page in neighbors)
+            {
+                splittedPageList[j].Add(page);
+                j++;
+                if (j >= nbThreads) j = 0;
+            }
+
+            foreach(var onePageGroup in splittedPageList)
+            {
+                threads.Add(new Thread(() =>
+                {
+                    foreach (var page in onePageGroup.Value)
+                    {
+                        page.LoadPageInfos().Wait();
+                    }
+                }));
+            }
+
+            foreach (Thread thread in threads) thread.Start();
+            foreach (Thread thread in threads) thread.Join();
+            
             return neighbors;
         }
 
