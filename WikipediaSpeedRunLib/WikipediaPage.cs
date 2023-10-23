@@ -129,5 +129,10 @@ namespace WikipediaSpeedRunLib
             }
             return htmlLinkElements;
         }
+
+        public int GetHeuristicDistanceToGoal(INode goalNode)
+        {
+            return 0;
+        }
     }
 }
