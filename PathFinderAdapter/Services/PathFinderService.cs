@@ -140,7 +140,7 @@ namespace PathFinderAdapter.Services
                         costSoFar.Add(neigboorId, newCost);
                     }
 
-                    var priority = newCost + currentNode.GetHeuristicDistanceToGoal(goalNode);
+                    var priority = newCost + neighboor.GetHeuristicDistanceToGoal(goalNode);
                     fronteir.Enqueue(neighboor, priority);
                 }
             }
