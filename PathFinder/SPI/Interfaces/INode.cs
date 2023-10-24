@@ -1,4 +1,4 @@
-﻿namespace PathFinderAdapter.Interfaces
+﻿namespace PathFinder.SPI.Interfaces
 {
     public interface INode
     {

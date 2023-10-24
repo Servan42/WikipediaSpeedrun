@@ -1,5 +1,5 @@
 using Moq;
-using PathFinderAdapter.Interfaces;
+using PathFinder.SPI.Interfaces;
 using System.Text;
 using WikipediaSpeedRunLib;
 

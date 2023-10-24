@@ -1,6 +1,7 @@
-﻿using PathFinderAdapter.Interfaces;
+﻿using PathFinder.API.Interfaces;
+using PathFinder.SPI.Interfaces;
 
-namespace PathFinderAdapter.Services
+namespace PathFinder.API.Services
 {
     public class PathFinderService : IPathFinderService
     {
@@ -13,9 +14,7 @@ namespace PathFinderAdapter.Services
 
             while (fronteir.Count > 0)
             {
-                Console.Write($"FRONTEIR: {fronteir.Count}\t");
                 INode currentNode = fronteir.Dequeue();
-                Console.WriteLine(currentNode.GetNodeIdentifier());
                 if (currentNode.GetNodeIdentifier() == goalNode.GetNodeIdentifier()) { break; }
 
                 foreach (INode neighboor in currentNode.GetNeighbors())
@@ -44,9 +43,7 @@ namespace PathFinderAdapter.Services
 
             while (fronteir.Count > 0)
             {
-                Console.Write($"FRONTEIR: {fronteir.Count}\t");
                 INode currentNode = fronteir.Dequeue();
-                Console.WriteLine(currentNode.GetNodeIdentifier());
                 if (currentNode.GetNodeIdentifier() == goalNode.GetNodeIdentifier()) { break; }
 
                 foreach (INode neighboor in currentNode.GetNeighbors())
@@ -152,12 +149,12 @@ namespace PathFinderAdapter.Services
         {
             var path = new List<INode>();
             INode current = goalNode;
-            while(current.GetNodeIdentifier() != startNode.GetNodeIdentifier())
+            while (current.GetNodeIdentifier() != startNode.GetNodeIdentifier())
             {
                 path.Add(current);
                 current = keyCameFromValue[current.GetNodeIdentifier()];
             }
-            
+
             path.Add(startNode);
             path.Reverse();
 

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaSpeedRun.ConsoleAp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaSpeedRun.Tests", "WikipediaSpeedRun.Tests\WikipediaSpeedRun.Tests.csproj", "{8281DD4B-B61B-4FCE-AB36-B63F03AD6634}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathFinderAdapter", "PathFinderAdapter\PathFinderAdapter.csproj", "{9FE422DD-4F42-4C24-A8C1-27F2D8547F50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinder", "PathFinder\PathFinder.csproj", "{9FE422DD-4F42-4C24-A8C1-27F2D8547F50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

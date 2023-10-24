@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PathFinderAdapter\PathFinderAdapter.csproj" />
+    <ProjectReference Include="..\PathFinder\PathFinder.csproj" />
     <ProjectReference Include="..\WikipediaSpeedRunLib\WikipediaSpeedRunLib.csproj" />
   </ItemGroup>
 

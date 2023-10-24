@@ -1,15 +1,16 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using PathFinderAdapter.Interfaces;
-using PathFinderAdapter.Services;
+using PathFinder.API.Interfaces;
+using PathFinder.API.Services;
 using WikipediaSpeedRunLib;
 using static System.Net.Mime.MediaTypeNames;
 
 HttpClientAdapter httpClient = new HttpClientAdapter();
 
-string goal = "https://en.wikipedia.org/wiki/BBC";
+string goal = "https://en.wikipedia.org/wiki/Manor_house";
+//string goal = "https://en.wikipedia.org/wiki/BBC";
 //string start = "https://en.wikipedia.org/wiki/Dunloy_railway_station";
-string start = "https://en.wikipedia.org/wiki/Lough_Finn";
+string start = "https://en.wikipedia.org/wiki/Zerator";
 WikipediaPage startPage = await WikipediaPage.Build(start, httpClient);
 
 IPathFinderService pathFinderService = new PathFinderService();
@@ -19,10 +20,10 @@ var cameFrom2 = pathFinderService.DijkstrasAlgorithm(startPage, new WikipediaPag
 Console.WriteLine("\nFOUND");
 Console.WriteLine(DateTime.Now - startTime);
 
-startTime = DateTime.Now;
-var cameFrom = pathFinderService.BreadthFirstSearch(startPage, new WikipediaPage(goal, httpClient));
-Console.WriteLine("\nFOUND");
-Console.WriteLine(DateTime.Now - startTime);
+//DateTime startTime = DateTime.Now;
+//var cameFrom = pathFinderService.BreadthFirstSearch(startPage, new WikipediaPage(goal, httpClient));
+//Console.WriteLine("\nFOUND");
+//Console.WriteLine(DateTime.Now - startTime);
 
 
 string currentUrl = goal;
@@ -34,12 +35,12 @@ while (currentUrl != start)
 
 Console.WriteLine("---");
 
-currentUrl = goal;
-while (currentUrl != start)
-{
-    Console.WriteLine(currentUrl);
-    currentUrl = cameFrom[currentUrl].GetNodeIdentifier();
-}
+//string currentUrl = goal;
+//while (currentUrl != start)
+//{
+//    Console.WriteLine(currentUrl);
+//    currentUrl = cameFrom[currentUrl].GetNodeIdentifier();
+//}
 
 Console.ReadLine();
 
