@@ -2,7 +2,7 @@
 
 namespace WikipediaSpeedRunLib
 {
-    public class WikipediaPage : INode
+    public class WikipediaPage : INodeForPathFinding
     {
         private readonly string url;
         private readonly IHttpClientAdapter httpClient;
@@ -38,7 +38,7 @@ namespace WikipediaSpeedRunLib
             return this.ValuableLinks.Count;
         }
 
-        public IEnumerable<INode> GetNeighbors()
+        public IEnumerable<INodeForPathFinding> GetNeighbors()
         {
             if (!this.isPageLoaded)
             {
@@ -127,7 +127,7 @@ namespace WikipediaSpeedRunLib
             return htmlLinkElements;
         }
 
-        public int GetHeuristicDistanceToGoal(INode goalNode)
+        public int GetHeuristicDistanceToGoal(INodeForPathFinding goalNode)
         {
             return 0;
         }

@@ -5,19 +5,26 @@ namespace PathFinder.API.Services
 {
     public class PathFinderService : IPathFinderService
     {
-        public Dictionary<string, INode> BreadthFirstSearch(INode firstNode, INode goalNode)
+        private readonly IGraphForPathFinding graph;
+
+        public PathFinderService(IGraphForPathFinding graph)
         {
-            Queue<INode> fronteir = new Queue<INode>();
+            this.graph = graph;
+        }
+
+        public Dictionary<string, INodeForPathFinding> BreadthFirstSearch(INodeForPathFinding firstNode, INodeForPathFinding goalNode)
+        {
+            Queue<INodeForPathFinding> fronteir = new Queue<INodeForPathFinding>();
             fronteir.Enqueue(firstNode);
-            Dictionary<string, INode> keyCameFromValue = new Dictionary<string, INode>();
+            Dictionary<string, INodeForPathFinding> keyCameFromValue = new Dictionary<string, INodeForPathFinding>();
             keyCameFromValue.Add(firstNode.GetNodeIdentifier(), null);
 
             while (fronteir.Count > 0)
             {
-                INode currentNode = fronteir.Dequeue();
+                INodeForPathFinding currentNode = fronteir.Dequeue();
                 if (currentNode.GetNodeIdentifier() == goalNode.GetNodeIdentifier()) { break; }
 
-                foreach (INode neighboor in currentNode.GetNeighbors())
+                foreach (INodeForPathFinding neighboor in this.graph.GetNeighbors(currentNode))
                 {
                     if (keyCameFromValue.ContainsKey(neighboor.GetNodeIdentifier()))
                         continue;
@@ -30,12 +37,12 @@ namespace PathFinder.API.Services
             return keyCameFromValue;
         }
 
-        public Dictionary<string, INode> DijkstrasAlgorithm(INode firstNode, INode goalNode)
+        public Dictionary<string, INodeForPathFinding> DijkstrasAlgorithm(INodeForPathFinding firstNode, INodeForPathFinding goalNode)
         {
-            PriorityQueue<INode, int> fronteir = new PriorityQueue<INode, int>();
+            PriorityQueue<INodeForPathFinding, int> fronteir = new PriorityQueue<INodeForPathFinding, int>();
             fronteir.Enqueue(firstNode, 0);
 
-            Dictionary<string, INode> keyCameFromValue = new Dictionary<string, INode>();
+            Dictionary<string, INodeForPathFinding> keyCameFromValue = new Dictionary<string, INodeForPathFinding>();
             keyCameFromValue.Add(firstNode.GetNodeIdentifier(), null);
 
             Dictionary<string, int> costSoFar = new Dictionary<string, int>();
@@ -43,13 +50,13 @@ namespace PathFinder.API.Services
 
             while (fronteir.Count > 0)
             {
-                INode currentNode = fronteir.Dequeue();
+                INodeForPathFinding currentNode = fronteir.Dequeue();
                 if (currentNode.GetNodeIdentifier() == goalNode.GetNodeIdentifier()) { break; }
 
-                foreach (INode neighboor in currentNode.GetNeighbors())
+                foreach (INodeForPathFinding neighboor in this.graph.GetNeighbors(currentNode))
                 {
                     string neigboorId = neighboor.GetNodeIdentifier();
-                    int newCost = costSoFar[currentNode.GetNodeIdentifier()] + neighboor.GetCostOfCrossingThisNode();
+                    int newCost = costSoFar[currentNode.GetNodeIdentifier()] + this.graph.GetEdgeWeight(currentNode, neighboor);
                     if (keyCameFromValue.ContainsKey(neigboorId)
                         && newCost >= costSoFar[neigboorId])
                         continue;
@@ -73,20 +80,20 @@ namespace PathFinder.API.Services
             return keyCameFromValue;
         }
 
-        public Dictionary<string, INode> HeuristicSearch(INode firstNode, INode goalNode)
+        public Dictionary<string, INodeForPathFinding> HeuristicSearch(INodeForPathFinding firstNode, INodeForPathFinding goalNode)
         {
-            PriorityQueue<INode, int> fronteir = new PriorityQueue<INode, int>();
+            PriorityQueue<INodeForPathFinding, int> fronteir = new PriorityQueue<INodeForPathFinding, int>();
             fronteir.Enqueue(firstNode, 0);
 
-            Dictionary<string, INode> keyCameFromValue = new Dictionary<string, INode>();
+            Dictionary<string, INodeForPathFinding> keyCameFromValue = new Dictionary<string, INodeForPathFinding>();
             keyCameFromValue.Add(firstNode.GetNodeIdentifier(), null);
 
             while (fronteir.Count > 0)
             {
-                INode currentNode = fronteir.Dequeue();
+                INodeForPathFinding currentNode = fronteir.Dequeue();
                 if (currentNode.GetNodeIdentifier() == goalNode.GetNodeIdentifier()) { break; }
 
-                foreach (INode neighboor in currentNode.GetNeighbors())
+                foreach (INodeForPathFinding neighboor in this.graph.GetNeighbors(currentNode))
                 {
                     string neigboorId = neighboor.GetNodeIdentifier();
                     if (keyCameFromValue.ContainsKey(neigboorId))
@@ -94,7 +101,7 @@ namespace PathFinder.API.Services
 
                     keyCameFromValue.Add(neigboorId, currentNode);
 
-                    var priority = neighboor.GetHeuristicDistanceToGoal(goalNode);
+                    var priority = this.graph.GetHeuristicDistanceToGoal(neighboor, goalNode);
                     fronteir.Enqueue(neighboor, priority);
                 }
             }
@@ -102,12 +109,12 @@ namespace PathFinder.API.Services
             return keyCameFromValue;
         }
 
-        public Dictionary<string, INode> AstarAlgorithm(INode firstNode, INode goalNode)
+        public Dictionary<string, INodeForPathFinding> AstarAlgorithm(INodeForPathFinding firstNode, INodeForPathFinding goalNode)
         {
-            PriorityQueue<INode, int> fronteir = new PriorityQueue<INode, int>();
+            PriorityQueue<INodeForPathFinding, int> fronteir = new PriorityQueue<INodeForPathFinding, int>();
             fronteir.Enqueue(firstNode, 0);
 
-            Dictionary<string, INode> keyCameFromValue = new Dictionary<string, INode>();
+            Dictionary<string, INodeForPathFinding> keyCameFromValue = new Dictionary<string, INodeForPathFinding>();
             keyCameFromValue.Add(firstNode.GetNodeIdentifier(), null);
 
             Dictionary<string, int> costSoFar = new Dictionary<string, int>();
@@ -115,13 +122,13 @@ namespace PathFinder.API.Services
 
             while (fronteir.Count > 0)
             {
-                INode currentNode = fronteir.Dequeue();
+                INodeForPathFinding currentNode = fronteir.Dequeue();
                 if (currentNode.GetNodeIdentifier() == goalNode.GetNodeIdentifier()) { break; }
 
-                foreach (INode neighboor in currentNode.GetNeighbors())
+                foreach (INodeForPathFinding neighboor in this.graph.GetNeighbors(currentNode))
                 {
                     string neigboorId = neighboor.GetNodeIdentifier();
-                    int newCost = costSoFar[currentNode.GetNodeIdentifier()] + neighboor.GetCostOfCrossingThisNode();
+                    int newCost = costSoFar[currentNode.GetNodeIdentifier()] + this.graph.GetEdgeWeight(currentNode, neighboor);
                     if (keyCameFromValue.ContainsKey(neigboorId)
                         && newCost >= costSoFar[neigboorId])
                         continue;
@@ -137,7 +144,7 @@ namespace PathFinder.API.Services
                         costSoFar.Add(neigboorId, newCost);
                     }
 
-                    var priority = newCost + neighboor.GetHeuristicDistanceToGoal(goalNode);
+                    var priority = newCost + this.graph.GetHeuristicDistanceToGoal(neighboor,goalNode);
                     fronteir.Enqueue(neighboor, priority);
                 }
             }
@@ -145,10 +152,10 @@ namespace PathFinder.API.Services
             return keyCameFromValue;
         }
 
-        public List<INode> GetPath(Dictionary<string, INode> keyCameFromValue, INode startNode, INode goalNode)
+        public List<INodeForPathFinding> GetPath(Dictionary<string, INodeForPathFinding> keyCameFromValue, INodeForPathFinding startNode, INodeForPathFinding goalNode)
         {
-            var path = new List<INode>();
-            INode current = goalNode;
+            var path = new List<INodeForPathFinding>();
+            INodeForPathFinding current = goalNode;
             while (current.GetNodeIdentifier() != startNode.GetNodeIdentifier())
             {
                 path.Add(current);

@@ -132,7 +132,7 @@ namespace WikipediaSpeedRun.Tests
             await sut_page.LoadPageInfos();
 
             // WHEN
-            IEnumerable<INode> neighbors = sut_page.GetNeighbors();
+            IEnumerable<INodeForPathFinding> neighbors = sut_page.GetNeighbors();
 
             // THEN
             Assert.That(neighbors.Count, Is.EqualTo(2));
