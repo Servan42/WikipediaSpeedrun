@@ -29,26 +29,6 @@ namespace WikipediaSpeedRunLib
             return url;
         }
 
-        public int GetCostOfCrossingThisNode()
-        {
-            if (!this.isPageLoaded)
-            {
-                LoadPageInfos().Wait();
-            }
-            return this.ValuableLinks.Count;
-        }
-
-        public IEnumerable<INodeForPathFinding> GetNeighbors()
-        {
-            if (!this.isPageLoaded)
-            {
-                LoadPageInfos().Wait();
-            }
-
-            //return CreateNeighbors();
-            return CreateNeighborsThreaded(8);
-        }
-
         private List<WikipediaPage> CreateNeighbors()
         {
             List<WikipediaPage> neighbors = new();
@@ -125,11 +105,6 @@ namespace WikipediaSpeedRunLib
                 htmlLinkElements.Add("<a " + s.Substring(0, s.IndexOf("</a>")) + "</a>");
             }
             return htmlLinkElements;
-        }
-
-        public int GetHeuristicDistanceToGoal(INodeForPathFinding goalNode)
-        {
-            return 0;
         }
     }
 }

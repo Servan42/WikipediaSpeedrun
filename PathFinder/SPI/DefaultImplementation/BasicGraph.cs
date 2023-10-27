@@ -18,16 +18,25 @@ namespace PathFinder.SPI.DefaultImplementation
             WeightedAdjacencyList = new();
         }
 
-        public void AddNode(INodeForPathFinding node)
+        public bool AddNode(INodeForPathFinding node)
         {
+            if (Nodes.ContainsKey(node.GetNodeIdentifier()))
+                return false;
+
             Nodes.Add(node.GetNodeIdentifier(), node);
             WeightedAdjacencyList.Add(node.GetNodeIdentifier(), new Dictionary<string, int>());
+            return true;
         }
 
         public void AddBidirectionalEdge(INodeForPathFinding startNode, INodeForPathFinding destinationNode, int weight)
         {
             WeightedAdjacencyList[startNode.GetNodeIdentifier()].Add(destinationNode.GetNodeIdentifier(), weight);
             WeightedAdjacencyList[destinationNode.GetNodeIdentifier()].Add(startNode.GetNodeIdentifier(), weight);
+        }
+
+        public void AddUnidirectionalEdge(INodeForPathFinding startNode, INodeForPathFinding destinationNode, int weight)
+        {
+            WeightedAdjacencyList[startNode.GetNodeIdentifier()].Add(destinationNode.GetNodeIdentifier(), weight);
         }
 
         public int GetEdgeWeight(INodeForPathFinding startNode, INodeForPathFinding destinationNode)
