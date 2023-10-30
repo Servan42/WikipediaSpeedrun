@@ -1,8 +1,8 @@
-﻿using PathFinder.SPI.Interfaces;
+﻿using PathFinder.API.Interfaces;
 
 namespace WikipediaSpeedRunLib
 {
-    public class WikipediaPage : INodeForPathFinding
+    public class WikipediaPage : INode
     {
         private readonly string url;
         private readonly IHttpClientAdapter httpClient;
@@ -24,7 +24,7 @@ namespace WikipediaSpeedRunLib
 
         public Dictionary<string, LinkInfos> ValuableLinks { get; set; }
 
-        public string GetNodeIdentifier()
+        public string GetUniqueIdentifier()
         {
             return url;
         }
