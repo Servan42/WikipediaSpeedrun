@@ -1,7 +1,7 @@
 using Moq;
-using PathFinderAdapter.Interfaces;
 using System.Text;
-using WikipediaSpeedRunLib;
+using WikipediaSpeedRunLib.Model;
+using WikipediaSpeedRunLib.SPI.Interfaces;
 
 namespace WikipediaSpeedRun.Tests
 {
@@ -115,29 +115,6 @@ namespace WikipediaSpeedRun.Tests
             // THEN
             Assert.That(sut_page.ValuableLinks.Count, Is.EqualTo(linkelements.Count));
             linkelements.ForEach(e => Assert.That(sut_page.ValuableLinks.Values.Count(l => l.HtmlLinkElement == e) == 1));
-        }
-
-        [Test]
-        public async Task Should_return_page_neighbors()
-        {
-            // GIVEN
-            StringBuilder html = new();
-
-            html.Append("<!DOCTYPE html><html><head></head><body><main><div id=\"mw-content-text\">");
-            html.Append(validLinkElement1);
-            html.Append(validLinkElement2);
-            html.Append("</div></main></body></html>");
-            mockHttpClient.Setup(x => x.GetStringAsync(It.IsAny<string>())).ReturnsAsync(html.ToString());
-
-            await sut_page.LoadPageInfos();
-
-            // WHEN
-            IEnumerable<INode> neighbors = sut_page.GetNeighbors();
-
-            // THEN
-            Assert.That(neighbors.Count, Is.EqualTo(2));
-            Assert.That(neighbors.ElementAt(0).GetNodeIdentifier(), Is.EqualTo("https://en.wikipedia.org/wiki/Potentiometer"));
-            Assert.That(neighbors.ElementAt(1).GetNodeIdentifier(), Is.EqualTo("https://en.wikipedia.org/wiki/Image_recognition"));
         }
 
         [TestCase(validLinkElement1, "https://en.wikipedia.org/wiki/Potentiometer", "Potentiometer")]

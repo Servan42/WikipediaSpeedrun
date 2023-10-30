@@ -1,45 +1,31 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
-using PathFinderAdapter.Interfaces;
-using PathFinderAdapter.Services;
-using WikipediaSpeedRunLib;
-using static System.Net.Mime.MediaTypeNames;
+using PathFinder.API.Interfaces;
+using PathFinder.API.Services;
+using System.Diagnostics;
+using System.Linq;
+using WikipediaSpeedRunLib.API.Interfaces;
+using WikipediaSpeedRunLib.API.Services;
+using WikipediaSpeedRunLib.Extensions;
+using WikipediaSpeedRunLib.Model;
+using WikipediaSpeedRunLib.SPI.Interfaces;
+using WikipediaSpeedRunLib.SPI.SelfServices;
 
-HttpClientAdapter httpClient = new HttpClientAdapter();
-
-string goal = "https://en.wikipedia.org/wiki/BBC";
-//string start = "https://en.wikipedia.org/wiki/Dunloy_railway_station";
-string start = "https://en.wikipedia.org/wiki/Lough_Finn";
-WikipediaPage startPage = await WikipediaPage.Build(start, httpClient);
-
-IPathFinderService pathFinderService = new PathFinderService();
-
-DateTime startTime = DateTime.Now;
-var cameFrom2 = pathFinderService.DijkstrasAlgorithm(startPage, new WikipediaPage(goal, httpClient));
-Console.WriteLine("\nFOUND");
-Console.WriteLine(DateTime.Now - startTime);
-
-startTime = DateTime.Now;
-var cameFrom = pathFinderService.BreadthFirstSearch(startPage, new WikipediaPage(goal, httpClient));
-Console.WriteLine("\nFOUND");
-Console.WriteLine(DateTime.Now - startTime);
-
-
-string currentUrl = goal;
-while (currentUrl != start)
+internal class Program
 {
-    Console.WriteLine(currentUrl);
-    currentUrl = cameFrom2[currentUrl].GetNodeIdentifier();
+    private static async Task Main(string[] args)
+    {
+        IHttpClientAdapter httpClient = new HttpClientAdapter();
+        IWikipediaSpeedrunService wikipediaSpeedrunService = new WikipediaSpeedrunService(httpClient);
+
+        //string goal = "https://en.wikipedia.org/wiki/Country";
+        string goal = "https://en.wikipedia.org/wiki/Livestreaming";
+        string start = "https://en.wikipedia.org/wiki/Zerator";
+        //string goal = "https://en.wikipedia.org/wiki/BBC";
+        //string start = "https://en.wikipedia.org/wiki/Dunloy_railway_station";
+
+        var wikiNodeGraph = await wikipediaSpeedrunService.BuildNodeGraph(start, goal);
+        var path = wikiNodeGraph.BreadthFirstSearch(new Node(start.GetShortenedUrl()), new Node(goal.GetShortenedUrl()));
+        Console.WriteLine(string.Join("\n", path.Select(n => n.GetUniqueIdentifier())));
+    }
 }
-
-Console.WriteLine("---");
-
-currentUrl = goal;
-while (currentUrl != start)
-{
-    Console.WriteLine(currentUrl);
-    currentUrl = cameFrom[currentUrl].GetNodeIdentifier();
-}
-
-Console.ReadLine();
-

@@ -1,9 +1,8 @@
-﻿using PathFinderAdapter.Interfaces;
-using System.Reflection.Metadata.Ecma335;
-using System.Runtime.CompilerServices;
-using System.Text;
+﻿using PathFinder.API.Interfaces;
+using WikipediaSpeedRunLib.Extensions;
+using WikipediaSpeedRunLib.SPI.Interfaces;
 
-namespace WikipediaSpeedRunLib
+namespace WikipediaSpeedRunLib.Model
 {
     public class WikipediaPage : INode
     {
@@ -15,49 +14,29 @@ namespace WikipediaSpeedRunLib
         {
             this.url = url;
             this.httpClient = httpClient;
-            this.isPageLoaded = false;
+            isPageLoaded = false;
         }
 
         public static async Task<WikipediaPage> Build(string url, IHttpClientAdapter httpClient)
         {
-            WikipediaPage page = new WikipediaPage(url, httpClient);
+            WikipediaPage page = new WikipediaPage(url.GetLongUrl(), httpClient);
             await page.LoadPageInfos();
             return page;
         }
 
         public Dictionary<string, LinkInfos> ValuableLinks { get; set; }
 
-        public string GetNodeIdentifier()
+        public string GetUniqueIdentifier()
         {
             return url;
-        }
-
-        public int GetCostOfCrossingThisNode()
-        {
-            if (!this.isPageLoaded)
-            {
-                LoadPageInfos().Wait();
-            }
-            return this.ValuableLinks.Count;
-        }
-
-        public IEnumerable<INode> GetNeighbors()
-        {
-            if (!this.isPageLoaded)
-            {
-                LoadPageInfos().Wait();
-            }
-
-            //return CreateNeighbors();
-            return CreateNeighborsThreaded(8);
         }
 
         private List<WikipediaPage> CreateNeighbors()
         {
             List<WikipediaPage> neighbors = new();
-            foreach (var link in this.ValuableLinks)
+            foreach (var link in ValuableLinks)
             {
-                WikipediaPage neighboor = new WikipediaPage(link.Value.Url, this.httpClient);
+                WikipediaPage neighboor = new WikipediaPage(link.Value.Url, httpClient);
                 neighboor.LoadPageInfos().Wait();
                 neighbors.Add(neighboor);
             }
@@ -68,16 +47,16 @@ namespace WikipediaSpeedRunLib
         {
             List<WikipediaPage> neighbors = new();
 
-            foreach (var link in this.ValuableLinks)
+            foreach (var link in ValuableLinks)
             {
-                WikipediaPage neighboor = new WikipediaPage(link.Value.Url, this.httpClient);
+                WikipediaPage neighboor = new WikipediaPage(link.Value.Url, httpClient);
                 neighbors.Add(neighboor);
             }
 
             List<Thread> threads = new();
             Dictionary<int, List<WikipediaPage>> splittedPageList = new();
             for (int i = 0; i < nbThreads; i++) splittedPageList.Add(i, new List<WikipediaPage>());
-            
+
             int j = 0;
             foreach (var page in neighbors)
             {
@@ -86,7 +65,7 @@ namespace WikipediaSpeedRunLib
                 if (j >= nbThreads) j = 0;
             }
 
-            foreach(var onePageGroup in splittedPageList)
+            foreach (var onePageGroup in splittedPageList)
             {
                 threads.Add(new Thread(() =>
                 {
@@ -99,13 +78,13 @@ namespace WikipediaSpeedRunLib
 
             foreach (Thread thread in threads) thread.Start();
             foreach (Thread thread in threads) thread.Join();
-            
+
             return neighbors;
         }
 
         public async Task LoadPageInfos()
         {
-            string html = await httpClient.GetStringAsync(this.url);
+            string html = await httpClient.GetStringAsync(url);
             ValuableLinks = new Dictionary<string, LinkInfos>();
             html = html.SubstringBetweenTwoTags("<div id=\"mw-content-text\"", "</main>");
             if (html == "") throw new ArgumentException("Could not find the main div of article", "html");
@@ -116,7 +95,7 @@ namespace WikipediaSpeedRunLib
                 if (!linkInfo.ShouldIgnore && !ValuableLinks.ContainsKey(linkInfo.Url)) ValuableLinks.Add(linkInfo.Url, linkInfo);
             });
 
-            this.isPageLoaded = true;
+            isPageLoaded = true;
         }
 
         private List<string> LoadHtmlLinkElementsFromHtml(string html)
