@@ -1,6 +1,7 @@
 using Moq;
 using System.Text;
-using WikipediaSpeedRunLib;
+using WikipediaSpeedRunLib.Model;
+using WikipediaSpeedRunLib.SPI.Interfaces;
 
 namespace WikipediaSpeedRun.Tests
 {

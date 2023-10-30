@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WikipediaSpeedRunLib.SPI.Interfaces;
 
-namespace WikipediaSpeedRunLib
+namespace WikipediaSpeedRunLib.SPI.SelfServices
 {
     public class HttpClientAdapter : IHttpClientAdapter
     {
