@@ -36,6 +36,9 @@ namespace PathFinder.SPI.DefaultImplementation
 
         public void AddUnidirectionalEdge(INodeForPathFinding startNode, INodeForPathFinding destinationNode, int weight)
         {
+            if (WeightedAdjacencyList[startNode.GetNodeIdentifier()].ContainsKey(destinationNode.GetNodeIdentifier()))
+                return;
+
             WeightedAdjacencyList[startNode.GetNodeIdentifier()].Add(destinationNode.GetNodeIdentifier(), weight);
         }
 
