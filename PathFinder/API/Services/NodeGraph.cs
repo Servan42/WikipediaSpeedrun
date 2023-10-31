@@ -9,8 +9,8 @@ namespace PathFinder.API.Services
 {
     public abstract class NodeGraph : INodeGraph
     {
-        private readonly Dictionary<string, INode> nodes;
-        private readonly Dictionary<string, Dictionary<string, int>> weightedAdjacencyList;
+        protected readonly Dictionary<string, INode> nodes;
+        protected readonly Dictionary<string, Dictionary<string, int>> weightedAdjacencyList;
 
         public NodeGraph()
         {
@@ -44,8 +44,11 @@ namespace PathFinder.API.Services
             weightedAdjacencyList[startNode.GetUniqueIdentifier()].Add(destinationNode.GetUniqueIdentifier(), weight);
         }
 
-        public INode GetNode(string uniqueIdentifier)
+        public INode? GetNode(string uniqueIdentifier)
         {
+            if (!this.nodes.ContainsKey(uniqueIdentifier))
+                return null;
+
             return this.nodes[uniqueIdentifier];
         }
 
