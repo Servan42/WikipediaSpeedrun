@@ -24,7 +24,7 @@ internal class Program
 
         Stopwatch stopwatch = new();
         stopwatch.Start();
-        var graphfromfile = wikiGraphPersistenceFileService.GetWikiGraphFromFile("F:\\Servan\\Graph.txt");
+        var graphfromfile = wikiGraphPersistenceFileService.GetWikiGraphFromFile("D:\\Temp\\Graph.txt");
         stopwatch.Stop();
         Console.WriteLine($"Read from file: {stopwatch.Elapsed}");
 
@@ -42,7 +42,9 @@ internal class Program
         Console.WriteLine($"Search from the internet: {stopwatch.Elapsed}");
 
         stopwatch.Restart();
-        wikiGraphPersistenceFileService.SaveWikiGraphToFile(wikiNodeGraph, "F:\\Servan\\Graph.txt");
+        wikiGraphPersistenceFileService.SaveWikiGraphToFile(wikiNodeGraph, "D:\\Temp\\Graph.txt");
+        wikiGraphPersistenceFileService.SaveLoadedNodeListAlphabetical(wikiNodeGraph, "D:\\Temp\\Graph_loadedNodes.txt");
+        wikiGraphPersistenceFileService.SaveLoadedNodeListByMaxNodes(wikiNodeGraph, "D:\\Temp\\Graph_loadedNodes_count.txt");
         stopwatch.Stop();
         Console.WriteLine($"Save graph to file: {stopwatch.Elapsed}");
         Console.WriteLine($"New nodes: {wikiNodeGraph.GetNodesCount() - initalNumberOfNodes}");

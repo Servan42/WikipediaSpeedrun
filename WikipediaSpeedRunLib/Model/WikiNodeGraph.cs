@@ -20,6 +20,11 @@ namespace WikipediaSpeedRunLib.Model
             return weightedAdjacencyList;
         }
 
+        public IEnumerable<string> GetLoadedNodes()
+        {
+            return this.nodes.Values.Where(n => ((WikiNode)n).IsNodeFullyLoaded).Select(n => n.GetUniqueIdentifier());
+        }
+
         public int GetNumberofLoadedNodes()
         {
             return this.nodes.Count(n => ((WikiNode)n.Value).IsNodeFullyLoaded);

@@ -19,15 +19,15 @@ namespace WikipediaSpeedRunLib.API.Services
             using (StreamReader reader = new StreamReader(filename))
             {
                 string? line = reader.ReadLine();
-                while(line != null)
+                while (line != null)
                 {
                     string[] splittedLine = line.Split(';');
 
                     var mainNode = new WikiNode(splittedLine[0]);
                     mainNode.IsNodeFullyLoaded = bool.Parse(splittedLine[1]);
-                    if(!graph.AddNode(mainNode))
+                    if (!graph.AddNode(mainNode))
                     {
-                        var alreadyPresentNode = (WikiNode) graph.GetNode(mainNode.GetUniqueIdentifier());
+                        var alreadyPresentNode = (WikiNode)graph.GetNode(mainNode.GetUniqueIdentifier());
                         alreadyPresentNode.IsNodeFullyLoaded = mainNode.IsNodeFullyLoaded;
                     }
 
@@ -43,6 +43,28 @@ namespace WikipediaSpeedRunLib.API.Services
             }
 
             return graph;
+        }
+
+        public void SaveLoadedNodeListAlphabetical(WikiNodeGraph wikiGraph, string filename)
+        {
+            using (StreamWriter sw = new StreamWriter(filename))
+            {
+                foreach(var nodeName in wikiGraph.GetLoadedNodes().OrderBy(n => n))
+                {
+                    sw.WriteLine(nodeName);
+                }
+            }
+        }
+
+        public void SaveLoadedNodeListByMaxNodes(WikiNodeGraph wikiGraph, string filename)
+        {
+            using (StreamWriter sw = new StreamWriter(filename))
+            {
+                foreach (var nodeName in wikiGraph.GetLoadedNodes().OrderBy(n => wikiGraph.GetAdjacencyList()[n].Count))
+                {
+                    sw.WriteLine($"{nodeName}, {wikiGraph.GetAdjacencyList()[nodeName].Count}");
+                }
+            }
         }
 
         public void SaveWikiGraphToFile(WikiNodeGraph wikiGraph, string filename)

@@ -11,6 +11,8 @@ namespace WikipediaSpeedRunLib.API.Interfaces
     public interface IWikiGraphPersistenceFileService
     {
         public void SaveWikiGraphToFile(WikiNodeGraph wikiGraph, string filename);
+        public void SaveLoadedNodeListAlphabetical(WikiNodeGraph nodeGraph, string filename);
+        public void SaveLoadedNodeListByMaxNodes(WikiNodeGraph wikiGraph, string filename);
         public WikiNodeGraph GetWikiGraphFromFile(string filename);
     }
 }
