@@ -11,7 +11,7 @@ namespace PathFinder.API.Interfaces
         public bool AddNode(INode node);
         public void AddBidirectionalEdge(INode startNode, INode destinationNode, int weight);
         public void AddUnidirectionalEdge(INode startNode, INode destinationNode, int weight);
-        public INode GetNode(string uniqueIdentifier);
+        public INode? GetNode(string uniqueIdentifier);
         public int GetNodesCount();
         public int GetEdgeWeight(INode startNode, INode destinationNode);
         public IEnumerable<INode> GetNeighbors(INode node);

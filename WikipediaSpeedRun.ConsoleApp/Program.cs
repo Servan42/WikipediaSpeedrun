@@ -16,16 +16,79 @@ internal class Program
     private static async Task Main(string[] args)
     {
         IHttpClientAdapter httpClient = new HttpClientAdapter();
-        IWikipediaSpeedrunService wikipediaSpeedrunService = new WikipediaSpeedrunService(httpClient);
+        CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        IWikipediaSpeedrunService wikipediaSpeedrunService = new WikipediaSpeedrunService(httpClient, cancellationTokenSource.Token);
+        IWikiGraphPersistenceFileService wikiGraphPersistenceFileService = new WikiGraphPersistenceFileService();
 
-        //string goal = "https://en.wikipedia.org/wiki/Country";
-        string goal = "https://en.wikipedia.org/wiki/Livestreaming";
         string start = "https://en.wikipedia.org/wiki/Zerator";
-        //string goal = "https://en.wikipedia.org/wiki/BBC";
-        //string start = "https://en.wikipedia.org/wiki/Dunloy_railway_station";
 
-        var wikiNodeGraph = await wikipediaSpeedrunService.BuildNodeGraph(start, goal);
-        var path = wikiNodeGraph.BreadthFirstSearch(new Node(start.GetShortenedUrl()), new Node(goal.GetShortenedUrl()));
-        Console.WriteLine(string.Join("\n", path.Select(n => n.GetUniqueIdentifier())));
+        Stopwatch stopwatch = new();
+        stopwatch.Start();
+        var graphfromfile = wikiGraphPersistenceFileService.GetWikiGraphFromFile("D:\\Temp\\Graph.txt");
+        stopwatch.Stop();
+        Console.WriteLine($"Read from file: {stopwatch.Elapsed}");
+
+        int initalNumberOfNodes = graphfromfile.GetNodesCount();
+        int numberOfLoadedNodes = graphfromfile.GetNumberofLoadedNodes();
+        Console.WriteLine($"Current number of nodes: {initalNumberOfNodes} ({(initalNumberOfNodes / 6736719.0) * 100.0:#.##}% of Wikipedia). Loaded: {((double)numberOfLoadedNodes / (double)initalNumberOfNodes)*100.0:0.##}% ({(numberOfLoadedNodes / 6736719.0) * 100.0:0.##}%)");
+
+        stopwatch.Restart();
+        var wikiNodeGraphTask = Task.Run(() => wikipediaSpeedrunService.AppendToNodeGraph(graphfromfile, start, null));
+        Console.WriteLine("Press a key to stop downloading wikipedia...");
+        Console.ReadKey();
+        cancellationTokenSource.Cancel();
+        var wikiNodeGraph = await wikiNodeGraphTask;
+        stopwatch.Stop();
+        Console.WriteLine($"Search from the internet: {stopwatch.Elapsed}");
+
+        stopwatch.Restart();
+        wikiGraphPersistenceFileService.SaveWikiGraphToFile(wikiNodeGraph, "D:\\Temp\\Graph.txt");
+        wikiGraphPersistenceFileService.SaveLoadedNodeListAlphabetical(wikiNodeGraph, "D:\\Temp\\Graph_loadedNodes.txt");
+        wikiGraphPersistenceFileService.SaveLoadedNodeListByMaxNodes(wikiNodeGraph, "D:\\Temp\\Graph_loadedNodes_count.txt");
+        stopwatch.Stop();
+        Console.WriteLine($"Save graph to file: {stopwatch.Elapsed}");
+        Console.WriteLine($"New nodes: {wikiNodeGraph.GetNodesCount() - initalNumberOfNodes}");
+
+        string goal;
+
+        while (true)
+        {
+            Console.Write("Enter start: ");
+            start = Console.ReadLine();
+            Console.Write("Enter goal: ");
+            goal = Console.ReadLine();
+            Pathfinding(goal, start, stopwatch, wikiNodeGraph);
+        }
+    }
+
+    private static void Pathfinding(string goal, string start, Stopwatch stopwatch, WikiNodeGraph wikiNodeGraph)
+    {
+        if (wikiNodeGraph.GetNode(goal.GetShortenedUrl()) == null)
+        {
+            Console.WriteLine($"Node {goal} does not exist in current graph");
+            return;
+        }
+
+        if (wikiNodeGraph.GetNode(start.GetShortenedUrl()) == null)
+        {
+            Console.WriteLine($"Node {start} does not exist in current graph");
+            return;
+        }
+
+        try
+        {
+            stopwatch.Restart();
+            var path = wikiNodeGraph.BreadthFirstSearch(new WikiNode(start.GetShortenedUrl()), new WikiNode(goal.GetShortenedUrl()));
+            stopwatch.Stop();
+            Console.WriteLine($"BreadthFirstSearch: {stopwatch.Elapsed}");
+
+            Console.WriteLine("PATH:");
+            Console.WriteLine(string.Join("\n", path.Select(n => n.GetUniqueIdentifier())));
+            Console.WriteLine();
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("No path could be found.\n");
+        }
     }
 }
