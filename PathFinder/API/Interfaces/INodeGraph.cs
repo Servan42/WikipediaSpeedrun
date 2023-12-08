@@ -9,6 +9,7 @@ namespace PathFinder.API.Interfaces
     public interface INodeGraph
     {
         public bool AddNode(INode node);
+        public bool AddNodes(List<INode> nodes);
         public bool AddBidirectionalEdge(INode startNode, INode destinationNode, int weight);
         public bool AddUnidirectionalEdge(INode startNode, INode destinationNode, int weight);
         public INode? GetNode(string uniqueIdentifier);

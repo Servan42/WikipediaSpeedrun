@@ -29,6 +29,21 @@ namespace PathFinder.API.Services
             return true;
         }
 
+        public bool AddNodes(List<INode> nodesToAdd)
+        {
+            foreach(var node in nodesToAdd)
+            {
+                if (nodes.ContainsKey(node.GetUniqueIdentifier()))
+                    return false;
+            }
+
+            foreach (var node in nodesToAdd)
+            {
+                AddNode(node);
+            }
+            return true;
+        }
+
         public bool AddBidirectionalEdge(INode startNode, INode destinationNode, int weight)
         {
             bool successStartToDest = AddUnidirectionalEdge(startNode, destinationNode, 5);

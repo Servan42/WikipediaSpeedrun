@@ -92,6 +92,52 @@ namespace PathFinderTests
         }
 
         [Test]
+        public void Should_add_multiple_nodes()
+        {
+            // GIVEN
+            List<INode> nodes = new List<INode>
+            {
+                new Node("1"),
+                new Node("2"),
+            };
+
+            // WHEN
+            bool result = graph_sut.AddNodes(nodes);
+
+            // THEN
+            Assert.That(result, Is.True);
+
+            var addedNode1 = graph_sut.GetNode("1");
+            var addedNode2 = graph_sut.GetNode("2");
+            Assert.IsNotNull(addedNode1);
+            Assert.IsNotNull(addedNode2);
+            Assert.That(addedNode1.GetUniqueIdentifier(), Is.EqualTo("1"));
+            Assert.That(addedNode2.GetUniqueIdentifier(), Is.EqualTo("2"));
+        }
+
+        [Test]
+        public void Should_not_add_multiple_nodes_if_at_least_one_is_already_present_in_graph()
+        {
+            // GIVEN
+            List<INode> nodes = new List<INode>
+            {
+                new Node("1"),
+                new Node("2"),
+            };
+
+            graph_sut.AddNode(nodes[1]);
+
+            // WHEN
+            bool result = graph_sut.AddNodes(nodes);
+
+            // THEN
+            Assert.That(result, Is.False);
+
+            Assert.IsNull(graph_sut.GetNode(nodes[0].GetUniqueIdentifier()));
+            Assert.IsNotNull(graph_sut.GetNode(nodes[1].GetUniqueIdentifier()));
+        }
+
+        [Test]
         public void Should_add_unidirectional_weighted_edge()
         {
             // GIVEN
