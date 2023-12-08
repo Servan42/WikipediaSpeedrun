@@ -36,12 +36,22 @@ namespace PathFinder.API.Services
             weightedAdjacencyList[destinationNode.GetUniqueIdentifier()].Add(startNode.GetUniqueIdentifier(), weight);
         }
 
-        public void AddUnidirectionalEdge(INode startNode, INode destinationNode, int weight)
+        public bool AddUnidirectionalEdge(INode startNode, INode destinationNode, int weight)
         {
-            if (weightedAdjacencyList[startNode.GetUniqueIdentifier()].ContainsKey(destinationNode.GetUniqueIdentifier()))
-                return;
+            string startNodeIdentifier = startNode.GetUniqueIdentifier();
+            string destinationNodeIdentifier = destinationNode.GetUniqueIdentifier();
 
-            weightedAdjacencyList[startNode.GetUniqueIdentifier()].Add(destinationNode.GetUniqueIdentifier(), weight);
+            if (GetNode(startNodeIdentifier) == null || !this.weightedAdjacencyList.ContainsKey(startNodeIdentifier))
+                return false;
+
+            if (GetNode(destinationNodeIdentifier) == null)
+                return false;
+
+            if (this.weightedAdjacencyList[startNodeIdentifier].ContainsKey(destinationNodeIdentifier))
+                return false;
+
+            this.weightedAdjacencyList[startNodeIdentifier].Add(destinationNodeIdentifier, weight);
+            return true;
         }
 
         public INode? GetNode(string uniqueIdentifier)
