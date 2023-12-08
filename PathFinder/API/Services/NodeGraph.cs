@@ -1,4 +1,5 @@
-﻿using PathFinder.API.Interfaces;
+﻿using PathFinder.API.Exceptions;
+using PathFinder.API.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,10 +31,15 @@ namespace PathFinder.API.Services
             return true;
         }
 
-        public void AddBidirectionalEdge(INode startNode, INode destinationNode, int weight)
+        public bool AddBidirectionalEdge(INode startNode, INode destinationNode, int weight)
         {
-            weightedAdjacencyList[startNode.GetUniqueIdentifier()].Add(destinationNode.GetUniqueIdentifier(), weight);
-            weightedAdjacencyList[destinationNode.GetUniqueIdentifier()].Add(startNode.GetUniqueIdentifier(), weight);
+            bool successStartToDest = AddUnidirectionalEdge(startNode, destinationNode, 5);
+            if (!successStartToDest) return false;
+            bool successDestToStart = AddUnidirectionalEdge(destinationNode, startNode, 5);
+            if (!successDestToStart)
+                RemoveEdge(startNode, destinationNode);
+
+            return successStartToDest && successDestToStart;
         }
 
         public bool AddUnidirectionalEdge(INode startNode, INode destinationNode, int weight)
@@ -69,17 +75,40 @@ namespace PathFinder.API.Services
 
         public int GetEdgeWeight(INode startNode, INode destinationNode)
         {
-            return weightedAdjacencyList[startNode.GetUniqueIdentifier()][destinationNode.GetUniqueIdentifier()];
+            string startNodeIdentifier = startNode.GetUniqueIdentifier();
+            string destinationNodeIdentifier = destinationNode.GetUniqueIdentifier();
+
+            if (GetNode(startNodeIdentifier) == null)
+                throw new NodeGraphException($"Start node '{startNodeIdentifier}' is not present in graph");
+
+            if (GetNode(destinationNodeIdentifier) == null)
+                throw new NodeGraphException($"Destination node '{destinationNodeIdentifier}' is not present in graph");
+
+            if(!weightedAdjacencyList.ContainsKey(startNodeIdentifier) || !weightedAdjacencyList[startNodeIdentifier].ContainsKey(destinationNodeIdentifier))
+                throw new NodeGraphException($"Edge from node '{startNodeIdentifier}' to node '{destinationNodeIdentifier}' does not exist in graph");
+
+            return weightedAdjacencyList[startNodeIdentifier][destinationNodeIdentifier];
         }
 
         public IEnumerable<INode> GetNeighbors(INode node)
         {
+            string nodeIdentifier = node.GetUniqueIdentifier();
+
+            if (GetNode(nodeIdentifier) == null)
+                return Enumerable.Empty<INode>();
+
             List<INode> nodes = new();
             foreach (var nodeId in weightedAdjacencyList[node.GetUniqueIdentifier()].Keys)
             {
                 nodes.Add(this.nodes[nodeId]);
             };
             return nodes;
+        }
+
+        // TODO: Implement public removal methods for eveything
+        private void RemoveEdge(INode startNode, INode destinationNode)
+        {
+            this.weightedAdjacencyList[startNode.GetUniqueIdentifier()].Remove(destinationNode.GetUniqueIdentifier());
         }
     }
 }
