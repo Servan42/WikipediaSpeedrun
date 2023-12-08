@@ -19,8 +19,6 @@ namespace PathFinder.API.Services
             weightedAdjacencyList = new();
         }
 
-        public abstract int GetHeuristicDistanceToGoal(INode startNode, INode destinationNode);
-
         public bool AddNode(INode node)
         {
             if (nodes.ContainsKey(node.GetUniqueIdentifier()))

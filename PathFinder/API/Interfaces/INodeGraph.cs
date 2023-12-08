@@ -15,6 +15,5 @@ namespace PathFinder.API.Interfaces
         public int GetNodesCount();
         public int GetEdgeWeight(INode startNode, INode destinationNode);
         public IEnumerable<INode> GetNeighbors(INode node);
-        public int GetHeuristicDistanceToGoal(INode startNode, INode destinationNode);
     }
 }
