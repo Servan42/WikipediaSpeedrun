@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PathFinder.API.Services
 {
-    public abstract class NodeGraph : INodeGraph
+    public class NodeGraph : INodeGraph
     {
         protected readonly Dictionary<string, INode> nodes;
         protected readonly Dictionary<string, Dictionary<string, int>> weightedAdjacencyList;
