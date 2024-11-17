@@ -13,6 +13,8 @@ using WikipediaSpeedRunLib.SPI.SelfServices;
 
 internal class Program
 {
+    private const string rootPath = "C:\\Temp\\";
+
     private static async Task Main(string[] args)
     {
         IHttpClientAdapter httpClient = new HttpClientAdapter();
@@ -24,7 +26,7 @@ internal class Program
 
         Stopwatch stopwatch = new();
         stopwatch.Start();
-        var graphfromfile = wikiGraphPersistenceFileService.GetWikiGraphFromFile("D:\\Temp\\Graph.txt");
+        var graphfromfile = wikiGraphPersistenceFileService.GetWikiGraphFromFile(Path.Combine(rootPath, "Graph.txt"));
         stopwatch.Stop();
         Console.WriteLine($"Read from file: {stopwatch.Elapsed}");
 
@@ -42,9 +44,9 @@ internal class Program
         Console.WriteLine($"Search from the internet: {stopwatch.Elapsed}");
 
         stopwatch.Restart();
-        wikiGraphPersistenceFileService.SaveWikiGraphToFile(wikiNodeGraph, "D:\\Temp\\Graph.txt");
-        wikiGraphPersistenceFileService.SaveLoadedNodeListAlphabetical(wikiNodeGraph, "D:\\Temp\\Graph_loadedNodes.txt");
-        wikiGraphPersistenceFileService.SaveLoadedNodeListByMaxNodes(wikiNodeGraph, "D:\\Temp\\Graph_loadedNodes_count.txt");
+        wikiGraphPersistenceFileService.SaveWikiGraphToFile(wikiNodeGraph, Path.Combine(rootPath, "Graph.txt"));
+        wikiGraphPersistenceFileService.SaveLoadedNodeListAlphabetical(wikiNodeGraph, Path.Combine(rootPath, "Graph_loadedNodes.txt"));
+        wikiGraphPersistenceFileService.SaveLoadedNodeListByMaxNodes(wikiNodeGraph, Path.Combine(rootPath, "Graph_loadedNodes_count.txt"));
         stopwatch.Stop();
         Console.WriteLine($"Save graph to file: {stopwatch.Elapsed}");
         Console.WriteLine($"New nodes: {wikiNodeGraph.GetNodesCount() - initalNumberOfNodes}");

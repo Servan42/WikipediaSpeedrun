@@ -8,6 +8,7 @@ namespace PathFinder.API.Interfaces
 {
     public interface INodeGraphWithPathFinding : INodeGraph
     {
+        public int GetHeuristicDistanceToGoal(INode startNode, INode destinationNode);
         public List<INode> BreadthFirstSearch(INode firstNode, INode goalNode);
         public List<INode> DijkstrasAlgorithm(INode firstNode, INode goalNode);
         public List<INode> HeuristicSearch(INode firstNode, INode goalNode);

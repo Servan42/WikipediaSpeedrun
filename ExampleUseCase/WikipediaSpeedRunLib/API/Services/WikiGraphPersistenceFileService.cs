@@ -1,5 +1,4 @@
 ﻿using PathFinder.API.Interfaces;
-using PathFinder.API.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +14,9 @@ namespace WikipediaSpeedRunLib.API.Services
         public WikiNodeGraph GetWikiGraphFromFile(string filename)
         {
             WikiNodeGraph graph = new WikiNodeGraph();
+
+            if (!File.Exists(filename))
+                File.Create(filename).Close();
 
             using (StreamReader reader = new StreamReader(filename))
             {
@@ -49,7 +51,7 @@ namespace WikipediaSpeedRunLib.API.Services
         {
             using (StreamWriter sw = new StreamWriter(filename))
             {
-                foreach(var nodeName in wikiGraph.GetLoadedNodes().OrderBy(n => n))
+                foreach (var nodeName in wikiGraph.GetLoadedNodes().OrderBy(n => n))
                 {
                     sw.WriteLine(nodeName);
                 }

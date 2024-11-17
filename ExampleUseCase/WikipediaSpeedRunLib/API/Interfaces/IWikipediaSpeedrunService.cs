@@ -1,5 +1,4 @@
-﻿using PathFinder.API.Interfaces;
-using WikipediaSpeedRunLib.Model;
+﻿using WikipediaSpeedRunLib.Model;
 
 namespace WikipediaSpeedRunLib.API.Interfaces
 {

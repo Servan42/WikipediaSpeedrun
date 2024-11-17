@@ -9,6 +9,8 @@ namespace PathFinder.API.Services
 {
     public abstract class NodeGraphWithPathFinding : NodeGraph, INodeGraphWithPathFinding
     {
+        public abstract int GetHeuristicDistanceToGoal(INode startNode, INode destinationNode);
+
         public List<INode> BreadthFirstSearch(INode firstNode, INode goalNode)
         {
             Queue<INode> fronteir = new Queue<INode>();

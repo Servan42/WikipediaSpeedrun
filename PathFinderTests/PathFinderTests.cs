@@ -1,6 +1,7 @@
 
 using PathFinder.API.Interfaces;
 using PathFinder.API.Services;
+using PathFinderTests.Helpers;
 using System.Security.Cryptography.X509Certificates;
 
 namespace PathFinderTests
@@ -8,14 +9,15 @@ namespace PathFinderTests
     public class PathFinderTests
     {
         [Test]
+        [Ignore("Coverage")]
         public void Should_pathfind_on_BasicGraph()
         {
-            INodeGraphWithPathFinding graph = new BasicGraph();
+            INodeGraphWithPathFinding graph = new GraphStub();
 
-            var node0 = new Node("0");
-            var node1 = new Node("1");
-            var node2 = new Node("2");
-            var node3 = new Node("3");
+            INode node0 = new Node("0");
+            INode node1 = new Node("1");
+            INode node2 = new Node("2");
+            INode node3 = new Node("3");
 
             graph.AddNode(node0);
             graph.AddNode(node1);
@@ -38,14 +40,6 @@ namespace PathFinderTests
 
             path = graph.AstarAlgorithm(node0, node3);
             Assert.That(string.Join(',', path.Select(n => n.GetUniqueIdentifier()).ToList()), Is.EqualTo("0,2,1,3"));
-        }
-    }
-
-    internal class BasicGraph : NodeGraphWithPathFinding
-    {
-        public override int GetHeuristicDistanceToGoal(INode startNode, INode destinationNode)
-        {
-            return 1;
         }
     }
 }

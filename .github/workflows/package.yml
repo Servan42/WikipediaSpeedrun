@@ -1,0 +1,35 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  Generate_nupkg:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    
+    - name: Test
+      run: |
+        dotnet build -c Debug
+        dotnet test ./PathFinderTests/PathFinderTests.csproj -c Debug
+    
+    - name: Package
+      run: |
+        dotnet clean
+        dotnet build -c Release ./PathFinder/PathFinder.csproj
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: PathFinderNupkg
+        path: ./PathFinder/bin/Release/*.nupkg
