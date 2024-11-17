@@ -16,6 +16,9 @@ namespace WikipediaSpeedRunLib.API.Services
         {
             WikiNodeGraph graph = new WikiNodeGraph();
 
+            if (!File.Exists(filename))
+                File.Create(filename).Close();
+
             using (StreamReader reader = new StreamReader(filename))
             {
                 string? line = reader.ReadLine();
@@ -49,7 +52,7 @@ namespace WikipediaSpeedRunLib.API.Services
         {
             using (StreamWriter sw = new StreamWriter(filename))
             {
-                foreach(var nodeName in wikiGraph.GetLoadedNodes().OrderBy(n => n))
+                foreach (var nodeName in wikiGraph.GetLoadedNodes().OrderBy(n => n))
                 {
                     sw.WriteLine(nodeName);
                 }
