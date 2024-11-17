@@ -30,7 +30,7 @@ jobs:
         dotnet build -c Release ./PathFinder/PathFinder.csproj
 
     - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: PathFinderNupkg
-          path: ./PathFinder/bin/Release/*.nupkg
+      uses: actions/upload-artifact@v4
+      with:
+        name: PathFinderNupkg
+        path: ./PathFinder/bin/Release/*.nupkg
