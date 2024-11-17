@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33627.172
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaSpeedRunLib", "WikipediaSpeedRunLib\WikipediaSpeedRunLib.csproj", "{3D80C8FC-EDE0-4BE3-8D88-A6AB2DF852D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaSpeedRunLib", "ExampleUseCase\WikipediaSpeedRunLib\WikipediaSpeedRunLib.csproj", "{3D80C8FC-EDE0-4BE3-8D88-A6AB2DF852D7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaSpeedRun.ConsoleApp", "WikipediaSpeedRun.ConsoleApp\WikipediaSpeedRun.ConsoleApp.csproj", "{0BE31D7C-E52B-435A-B3FD-27E90B9FC105}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaSpeedRun.ConsoleApp", "ExampleUseCase\WikipediaSpeedRun.ConsoleApp\WikipediaSpeedRun.ConsoleApp.csproj", "{0BE31D7C-E52B-435A-B3FD-27E90B9FC105}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaSpeedRun.Tests", "WikipediaSpeedRun.Tests\WikipediaSpeedRun.Tests.csproj", "{8281DD4B-B61B-4FCE-AB36-B63F03AD6634}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WikipediaSpeedRun.Tests", "ExampleUseCase\WikipediaSpeedRun.Tests\WikipediaSpeedRun.Tests.csproj", "{8281DD4B-B61B-4FCE-AB36-B63F03AD6634}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinder", "PathFinder\PathFinder.csproj", "{9FE422DD-4F42-4C24-A8C1-27F2D8547F50}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathFinderTests", "PathFinderTests\PathFinderTests.csproj", "{AA58DFB4-C9CB-442B-8A00-5FD6CC9DCACD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PathFinderTests", "PathFinderTests\PathFinderTests.csproj", "{AA58DFB4-C9CB-442B-8A00-5FD6CC9DCACD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExampleUseCase", "ExampleUseCase", "{E007C2D7-9B73-4198-BFD6-7176020A732E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +44,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3D80C8FC-EDE0-4BE3-8D88-A6AB2DF852D7} = {E007C2D7-9B73-4198-BFD6-7176020A732E}
+		{0BE31D7C-E52B-435A-B3FD-27E90B9FC105} = {E007C2D7-9B73-4198-BFD6-7176020A732E}
+		{8281DD4B-B61B-4FCE-AB36-B63F03AD6634} = {E007C2D7-9B73-4198-BFD6-7176020A732E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A761635F-DED6-440C-A649-1FE256B3BAF1}
